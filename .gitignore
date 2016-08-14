@@ -7,3 +7,4 @@
 !.global_gitignore
 !.tmux.conf
 !.zshrc
+!setup.sh
