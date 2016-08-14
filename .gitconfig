@@ -1,0 +1,19 @@
+[core]
+        excludesfile = /home/kaikuchn/.global_gitignore
+        editor = vi
+[user]
+        name = Kai Kuchenbecker
+        email = kuchenbecker.k@gmail.com
+[alias]
+        co = checkout
+        st = status
+        ci = commit --verbose
+        who = config --global user.email
+[push]
+        default = upstream
+[github]
+        user = kaikuchn
+[commit]
+        template = ~/.gitmessage
+[pull]
+        rebase = true

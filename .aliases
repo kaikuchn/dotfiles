@@ -1,0 +1,22 @@
+# alias trash_locks='fuser -f ~/.Trash/* | xargs kill -9'
+# alias givx='function _givx(){ git clone git@github.com:ivx/$1.git; };_givx'
+alias qrspec='be rspec --tag ~@slow'
+# alias update-rbenv='brew update && brew upgrade rbenv ruby-build'
+# alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
+alias be='bundle exec'
+alias gc='git commit --verbose'
+
+load_postgres_dump() {
+  if [ $# = 1]
+  then
+    psql -U kkuchenbecker -d forecast_development -f $1
+  elif [ $# = 2]
+  then
+    psql -U kkuchenbecker -d $2 -f $1
+  else
+    echo `usage: load_dump {dump_file.sql} [{destination_db}]`
+  fi
+}
+
+alias load_dump=load_postgres_dump
+alias glo=git log -30 --graph --pretty=format:'%h %ad %s (%an)' --date=short

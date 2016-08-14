@@ -1,0 +1,9 @@
+*
+!.aliases
+!.excercism.json
+!.gitconfig
+!.gitignore
+!.gitmessage
+!.global_gitignore
+!.tmux.conf
+!.zshrc
