@@ -48,8 +48,5 @@ git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 
 ## link dotfiles
 for f in .*; do
-  if [ -f $f ]
-    then
-      ln -s "$PWD/$f" ~/$f
-  fi
+  [[ -f $f ]] && ln -s "$PWD/$f" ~/$f
 done
