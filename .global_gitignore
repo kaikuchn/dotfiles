@@ -43,10 +43,19 @@ Session.vim
 # SASS
 # ----------------------------------------------------------------------------------------------
 .sass-cache
+
+
+tmp/
+dist/
 vendor/bundle
+vendor/bundler
+vendor/cache
+vendor/extensions
+vendor/gems
+vendor/specifications
 .wti
 .bundle
 .metrics
 *.reek
-tmp/
-dist/
+.dotenv
+

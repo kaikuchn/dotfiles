@@ -1,22 +1,83 @@
+function em() {
+  local target_path=${1:-"."}
+  emacsclient -nqc --frame-parameters="((fullscreen . maximized))" $target_path
+}
 # alias trash_locks='fuser -f ~/.Trash/* | xargs kill -9'
 # alias givx='function _givx(){ git clone git@github.com:ivx/$1.git; };_givx'
-alias qrspec='be rspec --tag ~@slow'
-# alias update-rbenv='brew update && brew upgrade rbenv ruby-build'
-# alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
 alias be='bundle exec'
 alias gc='git commit --verbose'
+alias gpn='git push 2>&1 | grep "git push" | xargs -I{} bash -c {}'
+alias please='sudo $(fc -ln -1)'
 
-load_postgres_dump() {
-  if [ $# = 1]
-  then
-    psql -U kkuchenbecker -d forecast_development -f $1
-  elif [ $# = 2]
-  then
-    psql -U kkuchenbecker -d $2 -f $1
-  else
-    echo `usage: load_dump {dump_file.sql} [{destination_db}]`
+alias glo="git log -30 --graph --pretty=format:'%h %ad %s (%an)' --date=short"
+alias goprod='ssh kaikuchn@vm2.sayway.com'
+alias blackwind='ssh kaikuchn@62.138.197.212'
+alias greenwind='ssh kaikuchn@62.138.202.36'
+alias bluewind='ssh kaikuchn@62.138.202.37'
+alias redwind='ssh kaikuchn@62.138.202.38'
+alias graywind='ssh kaikuchn@62.138.202.39'
+alias brownwind='ssh kaikuchn@62.138.202.40'
+alias make_cert='openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365'
+alias govm='ssh kaikuchn@vm2.sayway.com'
+
+rssh() {
+  SWARM="swarm01"
+  APP="core-web-app01"
+  if [[ $# -eq 1 ]]; then
+    SWARM="demo02"
+    if [[ $1 == 'd' ]]; then
+      APP="core-web-demo01"
+    fi
   fi
+  eval 'docker $(docker-machine config --swarm $SWARM) exec --user deploy -it $APP bash'
 }
 
-alias load_dump=load_postgres_dump
-alias glo=git log -30 --graph --pretty=format:'%h %ad %s (%an)' --date=short
+rrc() {
+  SWARM="swarm01"
+  APP="core-web-app01"
+  if [[ $# -eq 1 ]]; then
+    SWARM="demo02"
+    if [[ $1 == 'd' ]]; then
+      APP="core-web-demo01"
+    fi
+  fi
+  eval 'docker $(docker-machine config --swarm $SWARM) exec --user deploy -it $APP bash -c "LANG=en_US.UTF-8 rails console production;"'
+}
+
+update-docker-config() {
+  cp -r docker/prod/.docker $HOME
+  grep -rl "home/deploy" ~/.docker/machine/machines | xargs sed -i.trashme s@/home/deploy@$HOME@g
+  rm ~/.docker/machine/machines/**/*.trashme
+  chmod -R go-rwx $HOME/.docker
+}
+
+gen-pass() {
+  local length=${1:-16}
+  LC_ALL=C; tr -cd '[:alnum:]' < /dev/urandom | fold -w$length | head -n1
+}
+
+ansver='ansible-playbook --syntax-check'
+
+docker-conn() {
+  local machine=${1:?'Usage: docker_ssh <machine_name> [...shell_command]'}
+  shift
+  read key user host <<< $(jq '.Driver|[.SSHKeyPath,.SSHUser,.PrivateIPAddress]|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\")
+  echo $key $user@$host
+}
+
+docker-ssh() {
+  local machine=${1:?'Usage: docker_ssh <machine_name> [...shell_command]'}
+  shift
+  read key user host <<< $(jq '.Driver|[.SSHKeyPath,.SSHUser,.PrivateIPAddress]|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\")
+  ssh -i $key $user@$host $@
+}
+
+function sleep-in() {
+  local minutes=$1
+  local datetime=`date -v+${minutes}M +"%m/%d/%y %H:%M:%S"`
+  sudo pmset schedule sleep "$datetime"
+}
+
+function lumi_text_with_topics() {
+  jq '(.result.topics|map({(._id): .name})|add) as $topics | .result.documents|map({title, text, topics: .tags|map($topics[.])})'
+}

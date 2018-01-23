@@ -1,5 +1,5 @@
 [core]
-        excludesfile = /home/kaikuchn/.global_gitignore
+        excludesfile = /Users/kaikuchn/.global_gitignore
         editor = vi
 [user]
         name = Kai Kuchenbecker
@@ -9,6 +9,8 @@
         st = status
         ci = commit --verbose
         who = config --global user.email
+	sf = diff-tree --no-commit-id --name-only -r
+	cb = fetch --prune origin
 [push]
         default = upstream
 [github]
