@@ -2,6 +2,27 @@ function em() {
   local target_path=${1:-"."}
   emacsclient -nqc --frame-parameters="((fullscreen . maximized))" $target_path
 }
+function kill-em() {
+  emacsclient -e "(kill-emacs)"
+}
+
+function op() {
+  local item=${1:?'Must pass item to fetch'}
+  onepass get item $item | jq '.details.fields|map(select(.designation=="password").value)[]' | head -n1 | pbcopy
+  (sleep 30; pbcopy < /dev/null) &
+  onepass get item $item | jq '.details.fields|map(select(.designation=="username").value)[]' | head -n1
+}
+
+function git-pullrequest() {
+  local repository=$(basename -s .git `git config --get remote.origin.url`)
+  local branch=$(git rev-parse --abbrev-ref HEAD)
+  git push --set-upstream origin "$branch"
+  open "https://github.com/say-way/$repository/pull/new/$branch"
+}
+alias git-pr='git-pullrequest'
+
+alias now='gdate +%s%N'
+
 # alias trash_locks='fuser -f ~/.Trash/* | xargs kill -9'
 # alias givx='function _givx(){ git clone git@github.com:ivx/$1.git; };_givx'
 alias be='bundle exec'
@@ -10,13 +31,8 @@ alias gpn='git push 2>&1 | grep "git push" | xargs -I{} bash -c {}'
 alias please='sudo $(fc -ln -1)'
 
 alias glo="git log -30 --graph --pretty=format:'%h %ad %s (%an)' --date=short"
+alias citus='docker $(docker-machine config citus-master) exec -it citus-coordinator psql -U postgres -d core_production'
 alias goprod='ssh kaikuchn@vm2.sayway.com'
-alias blackwind='ssh kaikuchn@62.138.197.212'
-alias greenwind='ssh kaikuchn@62.138.202.36'
-alias bluewind='ssh kaikuchn@62.138.202.37'
-alias redwind='ssh kaikuchn@62.138.202.38'
-alias graywind='ssh kaikuchn@62.138.202.39'
-alias brownwind='ssh kaikuchn@62.138.202.40'
 alias make_cert='openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365'
 alias govm='ssh kaikuchn@vm2.sayway.com'
 

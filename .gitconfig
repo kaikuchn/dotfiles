@@ -17,5 +17,6 @@
         user = kaikuchn
 [commit]
         template = ~/.gitmessage
+	verbose = true
 [pull]
         rebase = true
