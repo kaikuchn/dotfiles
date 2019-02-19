@@ -14,10 +14,11 @@ function op() {
 }
 
 function git-pullrequest() {
+  local account=$(dirname `git config --get remote.origin.url` | cut -d: -f2)
   local repository=$(basename -s .git `git config --get remote.origin.url`)
   local branch=$(git rev-parse --abbrev-ref HEAD)
   git push --set-upstream origin "$branch"
-  open "https://github.com/say-way/$repository/pull/new/$branch"
+  open "https://github.com/$account/$repository/pull/new/$branch"
 }
 alias git-pr='git-pullrequest'
 
