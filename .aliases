@@ -1,24 +1,24 @@
 function em() {
-  local target_path=${1:-"."}
-  emacsclient -nqc --frame-parameters="((fullscreen . maximized))" $target_path
+    local target_path=${1:-"."}
+    emacsclient -nc --frame-parameters="((fullscreen . maximized))" $target_path
 }
 function kill-em() {
-  emacsclient -e "(kill-emacs)"
+    emacsclient -e "(kill-emacs)"
 }
 
 function op() {
-  local item=${1:?'Must pass item to fetch'}
-  onepass get item $item | jq '.details.fields|map(select(.designation=="password").value)[]' | head -n1 | pbcopy
-  (sleep 30; pbcopy < /dev/null) &
-  onepass get item $item | jq '.details.fields|map(select(.designation=="username").value)[]' | head -n1
+    local item=${1:?'Must pass item to fetch'}
+    onepass get item $item | jq '.details.fields|map(select(.designation=="password").value)[]' | head -n1 | pbcopy
+    (sleep 30; pbcopy < /dev/null) &
+    onepass get item $item | jq '.details.fields|map(select(.designation=="username").value)[]' | head -n1
 }
 
 function git-pullrequest() {
-  local account=$(dirname `git config --get remote.origin.url` | cut -d: -f2)
-  local repository=$(basename -s .git `git config --get remote.origin.url`)
-  local branch=$(git rev-parse --abbrev-ref HEAD)
-  git push --set-upstream origin "$branch"
-  open "https://github.com/$account/$repository/pull/new/$branch"
+    local account=$(dirname `git config --get remote.origin.url` | cut -d: -f2)
+    local repository=$(basename -s .git `git config --get remote.origin.url`)
+    local branch=$(git rev-parse --abbrev-ref HEAD)
+    git push --set-upstream origin "$branch"
+    open "https://github.com/$account/$repository/pull/new/$branch"
 }
 alias git-pr='git-pullrequest'
 
@@ -32,69 +32,129 @@ alias gpn='git push 2>&1 | grep "git push" | xargs -I{} bash -c {}'
 alias please='sudo $(fc -ln -1)'
 
 alias glo="git log -30 --graph --pretty=format:'%h %ad %s (%an)' --date=short"
-alias citus='docker $(docker-machine config citus-master) exec -it citus-coordinator psql -U postgres -d core_production'
+alias citus='psql -U postgres -d core_production -h $(machine-ip citus-master)'
 alias goprod='ssh kaikuchn@vm2.sayway.com'
 alias make_cert='openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365'
 alias govm='ssh kaikuchn@vm2.sayway.com'
 
-rssh() {
-  SWARM="swarm01"
-  APP="core-web-app01"
-  if [[ $# -eq 1 ]]; then
-    SWARM="demo02"
-    if [[ $1 == 'd' ]]; then
-      APP="core-web-demo01"
-    fi
-  fi
-  eval 'docker $(docker-machine config --swarm $SWARM) exec --user deploy -it $APP bash'
-}
+# k8s aliases
+alias kube-demo="kubectl config use-context demo"
+alias kube-prod="kubectl config use-context report"
 
-rrc() {
-  SWARM="swarm01"
-  APP="core-web-app01"
-  if [[ $# -eq 1 ]]; then
-    SWARM="demo02"
-    if [[ $1 == 'd' ]]; then
-      APP="core-web-demo01"
-    fi
-  fi
-  eval 'docker $(docker-machine config --swarm $SWARM) exec --user deploy -it $APP bash -c "LANG=en_US.UTF-8 rails console production;"'
-}
+alias init_wasm="source ~/code/spikes/emsdk/emsdk_env.sh"
 
-update-docker-config() {
-  cp -r docker/prod/.docker $HOME
-  grep -rl "home/deploy" ~/.docker/machine/machines | xargs sed -i.trashme s@/home/deploy@$HOME@g
-  rm ~/.docker/machine/machines/**/*.trashme
-  chmod -R go-rwx $HOME/.docker
+run-in-remote-container() {
+    ssh_cmd="docker-ssh"
+    user="deploy"
+    host="app01"
+
+    while test $# -gt 0; do
+        case "$1" in
+            -?|--help)
+                echo "usage: run-in-remote-container [OPTIONS] [CMD [cmd-args...]]"
+                echo " "
+                echo "Run a command in a docker container running on a remote host."
+                echo " "
+                echo "Options:"
+                echo "-?, --help              show brief help"
+                echo "-H, --host string       specify the host on which the container runs,"
+                echo "                        defaults to app01"
+                echo "-C, --container string  specify container, defaults to core-worker-$HOST"
+                echo "-U, --user string       specify the user who should execute the command,"
+                echo "                        defaults to `deploy`"
+                echo "-P, --public            connect via public ip address, by default uses private ip"
+                exit 0
+                ;;
+            -H|--host)
+                shift
+                if [ $# -gt 0 ]; then
+                    host="$1"
+                else
+                    echo "No host specified"
+                    exit 1
+                fi
+                shift
+                ;;
+            --host=*)
+                host="$(echo $1 | sed -e 's/^[^=]*=//g')"
+                ;;
+            -C|--container)
+                shift
+                if [ $# -gt 0 ]; then
+                    container="$1"
+                else
+                    echo "No container specified"
+                    exit 1
+                fi
+                shift
+                ;;
+            --container=*)
+                container="$(echo $1 | sed -e 's/^[^=]*=//g')"
+                ;;
+            -U|--user)
+                shift
+                if [ $# -gt 0 ]; then
+                    user="$1"
+                else
+                    echo "No user specified"
+                    exit 1
+                fi
+                shift
+                ;;
+            --user=*)
+                user="$(echo $1 | sed -e 's/^[^=]*=//g')"
+                ;;
+            -P|--public)
+                shift
+                ssh_cmd="docker-public-ssh"
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
+
+    $ssh_cmd $host -tt sudo docker exec --user=$user \
+               -it ${container:-"core-worker-$host"} ${@:-/bin/bash}
 }
+alias rssh='run-in-remote-container'
+alias rrc='run-in-remote-container bundle exec rails c'
+alias rsshd='run-in-remote-container --host demo01 --public'
+alias rrcd='run-in-remote-container --host demo01 --public bundle exec rails c'
 
 gen-pass() {
-  local length=${1:-16}
-  LC_ALL=C; tr -cd '[:alnum:]' < /dev/urandom | fold -w$length | head -n1
+    local length=${1:-16}
+    LC_ALL=C; tr -cd '[:alnum:]' < /dev/urandom | fold -w$length | head -n1
 }
 
-ansver='ansible-playbook --syntax-check'
-
 docker-conn() {
-  local machine=${1:?'Usage: docker_ssh <machine_name> [...shell_command]'}
-  shift
-  read key user host <<< $(jq '.Driver|[.SSHKeyPath,.SSHUser,.PrivateIPAddress]|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\")
-  echo $key $user@$host
+    local machine=${1:?'Usage: docker-conn <machine_name> [...shell_command]'}
+    shift
+    read key user host <<< $(jq '.Driver|[.SSHKeyPath,.SSHUser,.PrivateIPAddress]|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\")
+    echo $key $user@$host
 }
 
 docker-ssh() {
-  local machine=${1:?'Usage: docker_ssh <machine_name> [...shell_command]'}
-  shift
-  read key user host <<< $(jq '.Driver|[.SSHKeyPath,.SSHUser,.PrivateIPAddress]|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\")
-  ssh -i $key $user@$host $@
+    local machine=${1:?'Usage: docker-ssh <machine_name> [...shell_command]'}
+    shift
+    read key user host <<< $(jq '.Driver|[.SSHKeyPath,.SSHUser,.PrivateIPAddress]|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\")
+    ssh -i $key $user@$host $@
+}
+
+docker-public-ssh() {
+    local machine=${1:?'Usage: docker-ssh <machine_name> [...shell_command]'}
+    shift
+    read key user host <<< $(jq '.Driver|[.SSHKeyPath,.SSHUser,.IPAddress]|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\")
+    ssh -i $key $user@$host $@
+}
+
+machine-ip() {
+    local machine=${1:?'Usage: machine-ip <machine_name>'}
+    jq '.Driver.PrivateIPAddress|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\"
 }
 
 function sleep-in() {
-  local minutes=$1
-  local datetime=`date -v+${minutes}M +"%m/%d/%y %H:%M:%S"`
-  sudo pmset schedule sleep "$datetime"
-}
-
-function lumi_text_with_topics() {
-  jq '(.result.topics|map({(._id): .name})|add) as $topics | .result.documents|map({title, text, topics: .tags|map($topics[.])})'
+    local minutes=$1
+    local datetime=`date -v+${minutes}M +"%m/%d/%y %H:%M:%S"`
+    sudo pmset schedule sleep "$datetime"
 }

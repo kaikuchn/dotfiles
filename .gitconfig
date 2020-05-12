@@ -4,6 +4,7 @@
 [user]
         name = Kai Kuchenbecker
         email = kuchenbecker.k@gmail.com
+	signingkey = 4D2577B905791ADD
 [alias]
         co = checkout
         st = status
@@ -18,5 +19,6 @@
 [commit]
         template = ~/.gitmessage
 	verbose = true
+	gpgsign = true
 [pull]
         rebase = true

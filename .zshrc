@@ -16,6 +16,9 @@ fpath=( "$HOME/.zfunctions" $fpath )
 autoload -U promptinit && promptinit
 prompt pure
 
+# load env variables
+source ~/.zshenv
+
 # setup gcloud sdk
 source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'
 source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc'
@@ -34,8 +37,6 @@ if which exenv > /dev/null; then eval "$(exenv init -)"; fi
 
 # load aliases
 source ~/.aliases
-
-source ~/.zshenv
 
 # activate syntax highlighting
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
