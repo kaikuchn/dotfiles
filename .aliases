@@ -32,125 +32,13 @@ alias gpn='git push 2>&1 | grep "git push" | xargs -I{} bash -c {}'
 alias please='sudo $(fc -ln -1)'
 
 alias glo="git log -30 --graph --pretty=format:'%h %ad %s (%an)' --date=short"
-alias citus='psql -U postgres -d core_production -h $(machine-ip citus-master)'
-alias goprod='ssh kaikuchn@vm2.sayway.com'
 alias make_cert='openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365'
-alias govm='ssh kaikuchn@vm2.sayway.com'
-
-# k8s aliases
-alias kube-demo="kubectl config use-context demo"
-alias kube-prod="kubectl config use-context report"
 
 alias init_wasm="source ~/code/spikes/emsdk/emsdk_env.sh"
-
-run-in-remote-container() {
-    ssh_cmd="docker-ssh"
-    user="deploy"
-    host="app01"
-
-    while test $# -gt 0; do
-        case "$1" in
-            -?|--help)
-                echo "usage: run-in-remote-container [OPTIONS] [CMD [cmd-args...]]"
-                echo " "
-                echo "Run a command in a docker container running on a remote host."
-                echo " "
-                echo "Options:"
-                echo "-?, --help              show brief help"
-                echo "-H, --host string       specify the host on which the container runs,"
-                echo "                        defaults to app01"
-                echo "-C, --container string  specify container, defaults to core-worker-$HOST"
-                echo "-U, --user string       specify the user who should execute the command,"
-                echo "                        defaults to `deploy`"
-                echo "-P, --public            connect via public ip address, by default uses private ip"
-                exit 0
-                ;;
-            -H|--host)
-                shift
-                if [ $# -gt 0 ]; then
-                    host="$1"
-                else
-                    echo "No host specified"
-                    exit 1
-                fi
-                shift
-                ;;
-            --host=*)
-                host="$(echo $1 | sed -e 's/^[^=]*=//g')"
-                ;;
-            -C|--container)
-                shift
-                if [ $# -gt 0 ]; then
-                    container="$1"
-                else
-                    echo "No container specified"
-                    exit 1
-                fi
-                shift
-                ;;
-            --container=*)
-                container="$(echo $1 | sed -e 's/^[^=]*=//g')"
-                ;;
-            -U|--user)
-                shift
-                if [ $# -gt 0 ]; then
-                    user="$1"
-                else
-                    echo "No user specified"
-                    exit 1
-                fi
-                shift
-                ;;
-            --user=*)
-                user="$(echo $1 | sed -e 's/^[^=]*=//g')"
-                ;;
-            -P|--public)
-                shift
-                ssh_cmd="docker-public-ssh"
-                ;;
-            *)
-                break
-                ;;
-        esac
-    done
-
-    $ssh_cmd $host -tt sudo docker exec --user=$user \
-               -it ${container:-"core-worker-$host"} ${@:-/bin/bash}
-}
-alias rssh='run-in-remote-container'
-alias rrc='run-in-remote-container bundle exec rails c'
-alias rsshd='run-in-remote-container --host demo01 --public'
-alias rrcd='run-in-remote-container --host demo01 --public bundle exec rails c'
 
 gen-pass() {
     local length=${1:-16}
     LC_ALL=C; tr -cd '[:alnum:]' < /dev/urandom | fold -w$length | head -n1
-}
-
-docker-conn() {
-    local machine=${1:?'Usage: docker-conn <machine_name> [...shell_command]'}
-    shift
-    read key user host <<< $(jq '.Driver|[.SSHKeyPath,.SSHUser,.PrivateIPAddress]|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\")
-    echo $key $user@$host
-}
-
-docker-ssh() {
-    local machine=${1:?'Usage: docker-ssh <machine_name> [...shell_command]'}
-    shift
-    read key user host <<< $(jq '.Driver|[.SSHKeyPath,.SSHUser,.PrivateIPAddress]|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\")
-    ssh -i $key $user@$host $@
-}
-
-docker-public-ssh() {
-    local machine=${1:?'Usage: docker-ssh <machine_name> [...shell_command]'}
-    shift
-    read key user host <<< $(jq '.Driver|[.SSHKeyPath,.SSHUser,.IPAddress]|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\")
-    ssh -i $key $user@$host $@
-}
-
-machine-ip() {
-    local machine=${1:?'Usage: machine-ip <machine_name>'}
-    jq '.Driver.PrivateIPAddress|@sh' ~/.docker/machine/machines/$machine/config.json | tr -d \'\"
 }
 
 function sleep-in() {
