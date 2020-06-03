@@ -19,21 +19,18 @@ prompt pure
 # load env variables
 source ~/.zshenv
 
-# setup gcloud sdk
-source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'
-source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc'
-
 # setup ruby
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"
-export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
-
-# setup python
-export PATH="$HOME/.pyenv/shims:$PATH"
-eval "$(pyenv init -)"
+if which rbenv > /dev/null; then
+  export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+  export PATH="$HOME/.rbenv/bin:$PATH"
+  eval "$(rbenv init -)"
+  export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
+fi
 
 # setup elixir
-if which exenv > /dev/null; then eval "$(exenv init -)"; fi
+if which exenv > /dev/null; then
+  eval "$(exenv init -)"
+fi
 
 # load aliases
 source ~/.aliases
