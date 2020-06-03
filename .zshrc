@@ -22,9 +22,7 @@ source ~/.zshenv
 # setup ruby
 if which rbenv > /dev/null; then
   export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
-  export PATH="$HOME/.rbenv/bin:$PATH"
   eval "$(rbenv init -)"
-  export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
 fi
 
 # setup elixir
