@@ -19,8 +19,15 @@ chsh
 echo 'Setup Ruby via rbenv'
 brew install rbenv ruby-build
 
-rbenv install -v 2.3.1
-rbenv global 2.3.1
+rbenv install 2.7.1
+rbenv global 2.7.1
+
+# elixir
+echo 'Setup Elixir via exenv'
+brew install exenv elixir-build erlang
+
+exenv install 1.10.3
+exenv global 1.10.3
 
 # tmux
 brew install tmux
@@ -31,8 +38,10 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ## install emacs 24.5 from source
 echo 'Setup spacemacs'
 brew tap d12frosted/emacs-plus
-brew install emacs-plus --with-cocoa --with-gnutls --with-librsvg --with-imagemagick --with-spacemacs-icon
-brew linkapps
+brew install emacs-plus
+ln -s /usr/local/opt/emacs-plus/Emacs.app /Applications
+echo "  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  (add-to-list 'default-frame-alist '(ns-appearance . light))" >> ~/.emacs.d/init.el
 
 ## clone spacemacs
 git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
