@@ -24,3 +24,6 @@ export PATH="/usr/local/opt/curl/bin:$PATH"
 # ruby path wrangling
 export PATH="$HOME/.rbenv/bin:$PATH"
 export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
+
+# enable docker build-kit
+export DOCKER_BUILDKIT=1

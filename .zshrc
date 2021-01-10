@@ -25,9 +25,9 @@ if which rbenv > /dev/null; then
   eval "$(rbenv init -)"
 fi
 
-# setup elixir
-if which exenv > /dev/null; then
-  eval "$(exenv init -)"
+# setup asdf for erlang, elixir, node
+if which asdf > /dev/null; then
+  source $(brew --prefix asdf)/asdf.sh
 fi
 
 # load aliases

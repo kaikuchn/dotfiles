@@ -1,6 +1,7 @@
 [core]
         excludesfile = /Users/kaikuchn/.global_gitignore
         editor = vi
+	attributesfile = /Users/kaikuchn/.gitattributes
 [user]
         name = Kai Kuchenbecker
         email = kuchenbecker.k@gmail.com
@@ -19,6 +20,5 @@
 [commit]
         template = ~/.gitmessage
 	verbose = true
-	gpgsign = true
 [pull]
         rebase = true

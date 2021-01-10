@@ -1,5 +1,4 @@
-# OSX       taken from: https://github.com/github/gitignore/blob/master/Global/OSX.gitignore
-# ----------------------------------------------------------------------------------------------
+# OSX       taken from: https://github.com/github/gitignore/blob/master/Global/OSX.gitignore # ----------------------------------------------------------------------------------------------
 .DS_Store
 # Thumbnails
 ._*
@@ -62,3 +61,5 @@ vendor/specifications
 *.reek
 .dotenv
 
+.vscode/
+log/

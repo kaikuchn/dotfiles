@@ -46,3 +46,13 @@ function sleep-in() {
     local datetime=`date -v+${minutes}M +"%m/%d/%y %H:%M:%S"`
     sudo pmset schedule sleep "$datetime"
 }
+
+alias updatedb='sudo /usr/libexec/locate.updatedb'
+get() {
+  repo=${1:?'Must specify repository to fetch'}
+  git clone git@github.com:STUDITEMPS/${repo}.git
+}
+
+alias tix='MIX_ENV=test iex -S mix tix'
+
+alias verify_chromdriver='xattr -d com.apple.quarantine $(which chromedriver)'
