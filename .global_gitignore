@@ -63,3 +63,6 @@ vendor/specifications
 
 .vscode/
 log/
+
+# ASDF local version file
+.tool-versions

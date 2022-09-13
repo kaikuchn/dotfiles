@@ -20,5 +20,8 @@
 [commit]
         template = ~/.gitmessage
 	verbose = true
+	gpgsign = false
 [pull]
         rebase = true
+[init]
+	defaultBranch = main

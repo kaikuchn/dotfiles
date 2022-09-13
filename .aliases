@@ -29,6 +29,7 @@ alias now='gdate +%s%N'
 alias be='bundle exec'
 alias gc='git commit --verbose'
 alias gpn='git push 2>&1 | grep "git push" | xargs -I{} bash -c {}'
+alias gu='git reset HEAD~1'
 alias please='sudo $(fc -ln -1)'
 
 alias glo="git log -30 --graph --pretty=format:'%h %ad %s (%an)' --date=short"
@@ -55,4 +56,17 @@ get() {
 
 alias tix='MIX_ENV=test iex -S mix tix'
 
-alias verify_chromdriver='xattr -d com.apple.quarantine $(which chromedriver)'
+alias verify_chromedriver='xattr -d com.apple.quarantine $(which chromedriver)'
+alias uuid="uuidgen | tr '[:upper:]' '[:lower:]'"
+alias start_rabbitmq='docker run -d -p "15672:15672" -p "5672:5672" --ulimit nofile=16384:65536 rabbitmq:3.8-management'
+
+load_dump() {
+  local database=${1:?'Must specify database for import'}
+  local dump_file=${2:?'Must specify dump file'}
+
+  psql -h localhost -U postgres -d postgres -c "CREATE DATABASE ${database}"
+  pg_restore --verbose --clean --no-acl --no-owner -h localhost -U postgres -d ${database} ${dump_file}
+}
+
+alias fix_ulimit='sudo launchctl limit maxfiles 65536 200000'
+alias start_docker_vm='colima start'

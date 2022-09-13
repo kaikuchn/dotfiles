@@ -27,3 +27,11 @@ export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
 
 # enable docker build-kit
 export DOCKER_BUILDKIT=1
+
+# enable elixir/erlang shell history
+export ERL_AFLAGS="-kernel shell_history enabled"
+
+# Config for mob.sh
+export MOB_TIMER=20
+
+export PG_USER=kaikuchn
