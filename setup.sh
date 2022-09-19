@@ -1,17 +1,10 @@
 # DevContainer Setup
 
-# Helps me understand where we are and what is available
-echo "ENV:"
-env
+cp .aliases $HOME/.aliases
+cp .gitattributes $HOME/.gitattributes
+cp .gitconfig $HOME/.gitconfig
+cp .gitmessage $HOME/.gitmessage
+cp .global_gitignore $HOME/.global_gitignore
 
-echo "PWD:"
-pwd
-
-ln .aliases $HOME/.aliases
-ln .gitattributes $HOME/.gitattributes
-ln .gitconfig $HOME/.gitconfig
-ln .gitmessage $HOME/.gitmessage
-ln .global_gitignore $HOME/.global_gitignore
-
-echo "source ~/.aliases" >> $HOME/.bash_profile
-echo 'export EDITOR="vi"' >> $HOME/.bash_profile
+echo "source ~/.aliases" >> $HOME/.bashrc
+echo 'export GIT_EDITOR="vi"' >> $HOME/.bashrc
