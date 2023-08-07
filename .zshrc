@@ -12,8 +12,9 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
+# Setup pure https://github.com/sindresorhus/pure
 fpath=( "$HOME/.zfunctions" $fpath )
-autoload -U promptinit && promptinit
+autoload -U promptinit; promptinit
 prompt pure
 
 # load env variables
