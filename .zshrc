@@ -27,7 +27,7 @@ fi
 
 # setup asdf for erlang, elixir, node
 if which asdf > /dev/null; then
-  source $(brew --prefix asdf)/asdf.sh
+  source $(brew --prefix asdf)/libexec/asdf.sh
 fi
 
 # load aliases
@@ -41,3 +41,8 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 # heroku autocomplete setup
 HEROKU_AC_ZSH_SETUP_PATH=/Users/kaikuchn/Library/Caches/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH;
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/local/bin/terraform terraform
+
+test -d "$HOME/.tea" && source <("$HOME/.tea/tea.xyz/v*/bin/tea" --magic=zsh --silent)

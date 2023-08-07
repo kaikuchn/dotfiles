@@ -27,6 +27,7 @@ export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
 
 # enable docker build-kit
 export DOCKER_BUILDKIT=1
+export DOCKER_HOST="unix://$HOME/.colima/default/docker.sock"
 
 # enable elixir/erlang shell history
 export ERL_AFLAGS="-kernel shell_history enabled"
@@ -35,3 +36,10 @@ export ERL_AFLAGS="-kernel shell_history enabled"
 export MOB_TIMER=20
 
 export PG_USER=kaikuchn
+export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+
+# include subl executable in path
+export PATH="/Applications/Sublime Text.app/Contents/SharedSupport/bin:$PATH"
+
+# give preference to local binaries
+export PATH="./bin:$PATH"

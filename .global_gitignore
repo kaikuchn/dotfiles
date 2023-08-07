@@ -62,7 +62,11 @@ vendor/specifications
 .dotenv
 
 .vscode/
+bin/devcontainer
 log/
 
 # ASDF local version file
 .tool-versions
+
+# elixir language server
+.elixir_ls/

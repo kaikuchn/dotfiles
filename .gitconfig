@@ -5,7 +5,7 @@
 [user]
         name = Kai Kuchenbecker
         email = kuchenbecker.k@gmail.com
-	signingkey = 4D2577B905791ADD
+  	signingkey = ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbGcM1YYeFOjamkklHEh21T3A4UXhJi51/9/kBn7PVCxWs0DlXXgNMRSIB1fXE98yMlgYb5SazJNQP5U/IeBO8Z1ejILMyS5pUIe8EgCKJpg4wZzZnaRbhfQqO2pLYl/5Nkdt262LnQM3k/LjfZODfqcc+QiBsgKpkPj5quIvvUxV/2jVEhUVeDS3b4Zq7Jm64Tb0GwPnNZW7fAXn/xgh2XrgTVFNYWn0ONv9dAglFBdxrLktSBQntQ7i8kNpkhKUC6nIWOT0dfoNeDxboBtDaZtfxb79rpzcMrg73Y6F9hfx6GTUwYy4IjOm/wsLoa1HERT1SX0kZEfoxBn6NAe7z
 [alias]
         co = checkout
         st = status
@@ -15,13 +15,26 @@
 	cb = fetch --prune origin
 [push]
         default = upstream
+	gpgSign = if-asked
+	autoSetupRemote = true
 [github]
         user = kaikuchn
 [commit]
         template = ~/.gitmessage
 	verbose = true
-	gpgsign = false
+	gpgSign = true
+[tag]
+	gpgSign = true
 [pull]
         rebase = true
 [init]
 	defaultBranch = main
+[gpg]
+	format = ssh
+  
+[gpg "ssh"]
+	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+	allowedSignersFile = "~/.ssh/git.allowedSigners"
+
+[log]
+	showSignature = true

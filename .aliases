@@ -1,17 +1,17 @@
-function em() {
-    local target_path=${1:-"."}
-    emacsclient -nc --frame-parameters="((fullscreen . maximized))" $target_path
-}
-function kill-em() {
-    emacsclient -e "(kill-emacs)"
-}
+# function em() {
+#     local target_path=${1:-"."}
+#     emacsclient -nc --frame-parameters="((fullscreen . maximized))" $target_path
+# }
+# function kill-em() {
+#     emacsclient -e "(kill-emacs)"
+# }
 
-function op() {
-    local item=${1:?'Must pass item to fetch'}
-    onepass get item $item | jq '.details.fields|map(select(.designation=="password").value)[]' | head -n1 | pbcopy
-    (sleep 30; pbcopy < /dev/null) &
-    onepass get item $item | jq '.details.fields|map(select(.designation=="username").value)[]' | head -n1
-}
+# function op() {
+#     local item=${1:?'Must pass item to fetch'}
+#     onepass get item $item | jq '.details.fields|map(select(.designation=="password").value)[]' | head -n1 | pbcopy
+#     (sleep 30; pbcopy < /dev/null) &
+#     onepass get item $item | jq '.details.fields|map(select(.designation=="username").value)[]' | head -n1
+# }
 
 function git-pullrequest() {
     local account=$(dirname `git config --get remote.origin.url` | cut -d: -f2)
@@ -70,3 +70,5 @@ load_dump() {
 
 alias fix_ulimit='sudo launchctl limit maxfiles 65536 200000'
 alias start_docker_vm='colima start'
+alias login_ghcr='op --account my.1password.com read "op://Personal/GitHub ContainerRegistry PAT/credential" | docker login ghcr.io -u kaikuchn --password-stdin'
+alias dcode='devcontainer open'
