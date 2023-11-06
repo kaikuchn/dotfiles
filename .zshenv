@@ -33,7 +33,7 @@ export DOCKER_HOST="unix://$HOME/.colima/default/docker.sock"
 export ERL_AFLAGS="-kernel shell_history enabled"
 
 # Config for mob.sh
-export MOB_TIMER=20
+export MOB_TIMER=15
 
 export PG_USER=kaikuchn
 export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
