@@ -1,19 +1,29 @@
-# Lines configured by zsh-newuser-install
+function may_source() {
+  arg=${1:?'Must provide file to source'}
+  test -e "${arg}" && source "${arg}"
+}
+
+test -e /opt/homebrew/bin/brew && eval "$(/opt/homebrew/bin/brew shellenv)"
+
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
 setopt appendhistory autocd beep extendedglob nomatch notify
-bindkey -v
-# End of lines configured by zsh-newuser-install
-# The following lines were added by compinstall
-zstyle :compinstall filename "$HOME/.zshrc"
 
-autoload -Uz compinit
-compinit
-# End of lines added by compinstall
+# Set keymap to vi emulation
+bindkey -v
+
+if type brew &>/dev/null; then
+    FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+
+    autoload -Uz compinit
+    compinit
+  fi
+# The following lines were added by compinstall
+# zstyle :compinstall filename "$HOME/.zshrc"
 
 # Setup pure https://github.com/sindresorhus/pure
-fpath=( "$HOME/.zfunctions" $fpath )
+FPATH="$HOME/.zfunctions:$FPATH"
 autoload -U promptinit; promptinit
 prompt pure
 
@@ -34,16 +44,31 @@ fi
 # load aliases
 source ~/.aliases
 
-# activate syntax highlighting
-test -e /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh && source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-test -e /usr/local/share/zsh/site-functions && source /usr/local/share/zsh/site-functions
+if type brew &>/dev/null; then
+  # activate syntax highlighting
+  may_source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  # activate custom zsh completions
+  may_source "$(brew --prefix)/share/zsh/site-functions"
+  # System clipboard key bindings for Zsh Line Editor with vi mode
+  may_source "$(brew --prefix)/share/zsh-system-clipboard/zsh-system-clipboard.zsh"
+  # ZSH port of Fish history search
+  may_source "$(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+fi
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+# configure ZSH port of Fish history search
+if which history-substring-search-up > /dev/null; then
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
+fi
+may_source "${HOME}/.iterm2_shell_integration.zsh"
 
 # heroku autocomplete setup
-HEROKU_AC_ZSH_SETUP_PATH=/Users/kaikuchn/Library/Caches/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH;
+HEROKU_AC_ZSH_SETUP_PATH=/Users/kaikuchn/Library/Caches/heroku/autocomplete/zsh_setup && may_source $HEROKU_AC_ZSH_SETUP_PATH;
 
 test -e /usr/local/bin/terraform && complete -o nospace -C /usr/local/bin/terraform terraform
 
-test -e /opt/homebrew/bin/brew && eval "$(/opt/homebrew/bin/brew shellenv)"
-test -e $HOME/.config/op/plugins.sh && source $HOME/.config/op/plugins.sh
+may_source $HOME/.config/op/plugins.sh
+
+# fix run-help setup to provide help on shell builtins, e.g. run-help bindkey
+unalias run-help 2>/dev/null
+autoload -U run-help
