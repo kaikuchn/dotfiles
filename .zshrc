@@ -6,7 +6,7 @@ setopt appendhistory autocd beep extendedglob nomatch notify
 bindkey -v
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
-zstyle :compinstall filename '/Users/kaikuchn/.zshrc'
+zstyle :compinstall filename "$HOME/.zshrc"
 
 autoload -Uz compinit
 compinit
@@ -35,13 +35,15 @@ fi
 source ~/.aliases
 
 # activate syntax highlighting
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/local/share/zsh/site-functions
+test -e /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh && source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+test -e /usr/local/share/zsh/site-functions && source /usr/local/share/zsh/site-functions
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # heroku autocomplete setup
 HEROKU_AC_ZSH_SETUP_PATH=/Users/kaikuchn/Library/Caches/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH;
 
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/local/bin/terraform terraform
+test -e /usr/local/bin/terraform && complete -o nospace -C /usr/local/bin/terraform terraform
+
+test -e /opt/homebrew/bin/brew && eval "$(/opt/homebrew/bin/brew shellenv)"
+test -e $HOME/.config/op/plugins.sh && source $HOME/.config/op/plugins.sh
