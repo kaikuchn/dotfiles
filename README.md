@@ -1,8 +1,13 @@
 # dotfiles
-my personal dev setup
+
+For my personal DEV setup.
+
+Contains git configurations, aliases, shell config, etc.
 
 ## Usage
 
-Clone this repository to your machine, e.g., `~/.dotfiles` and run the setup.sh Skript if you're on Ubuntu.
-This will install a couple of tools and ask for user input as required.
-At the end it will link the dotfiles contained in this repository into the user's home folder.
+Clone this repository to your machine, e.g., `~/.dotfiles` and either copy or link the dotfiles into your home folder.
+
+### DevContainer Support
+
+The setup.sh script get's executed by GitHub DevContainers onCreate and copies some files into the `$HOME` directory.
