@@ -26,3 +26,5 @@
 	defaultBranch = main
 [log]
 	showSignature = true
+[credential]
+	helper=osxkeychain
